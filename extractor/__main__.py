@@ -1,5 +1,10 @@
+import fileinput
+
 def main():
-    print("Hello World!")
+    for line in fileinput.input():
+        line = line.rstrip()
+        print(line)
+
 
 if __name__ == "__main__":
     main()
