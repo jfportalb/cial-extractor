@@ -11,3 +11,9 @@ Given a file `websites.txt` that contains a list of websites to visit, run:
 ```bash
 cat websites.txt | python -m extractor
 ```
+
+## Docker Usage
+
+```bash
+cat websites.txt | docker compose run -T --build --rm extractor
+```

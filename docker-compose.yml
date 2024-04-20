@@ -1,0 +1,4 @@
+services:
+  extractor:
+    build: .
+    image: ghcr.io/jfportalb/cial-extractor
