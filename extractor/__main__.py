@@ -4,21 +4,36 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import regex as re
+from urllib.parse import quote
+
+def url_from_src(logo_url):
+    if logo_url.startswith("//"):
+        return "https:" + logo_url
+    if logo_url.startswith("/"):
+        splitted = url.split("/", 3)
+        return splitted[0] + "//" + splitted[2] + logo_url
+    if not logo_url.startswith('http'):
+        logo_url = url + logo_url
+    return logo_url
+
+def tag_has_logo(element):
+    if element.name not in ['img', 'svg']:
+        return False
+    if "logo" in element.get("src", "").lower() or  "logo" in element.get("alt", "").lower() or any("logo" in c.lower() for c in element.get("class", [])):
+        return True
+    for parent in element.parents:
+        if "logo" in parent.get("id", "").lower() or any("logo" in c.lower() for c in parent.get("class", [])):
+            return True
+    return False
 
 def extract_logo(url, soup):
-    img_tags = soup.find_all("img")
-    for img_tag in img_tags:
-        logo_url = img_tag.get("src")
-        if logo_url and not logo_url.startswith('data:'):
-            if "logo" in logo_url.lower() or "logo" in img_tag.get("alt", "").lower() or any("logo" in c.lower() for c in img_tag.get("class", [])):
-                if logo_url.startswith("//"):
-                    return "https:" + logo_url
-                if logo_url.startswith("/"):
-                    splitted = url.split("/", 3)
-                    return splitted[0] + "//" + splitted[2] + logo_url
-                if not logo_url.startswith('http'):
-                    logo_url = url + logo_url
-                return logo_url
+    tag = soup.find(tag_has_logo)
+    if not tag:
+        return None
+    if tag.name == "img":
+        return url_from_src(tag.get("src"))
+    if tag.name == "svg":
+        return "data:image/svg+xml," + quote(str(tag))
     return None
 
 def extract_phones(soup):
