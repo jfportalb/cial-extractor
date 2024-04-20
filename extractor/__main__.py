@@ -39,7 +39,7 @@ def extract_logo(url, soup):
 def extract_phones(soup):
     innerText = soup.get_text()
     pattern = re.compile(r'(?<!&copy;\s*)(?<=^|\s|>)(?:[\+]\s?[0-9]{1,3}\s?-?)?(?:\([0-9]{2,3}\)[-\s\.]?|[0-9]{2,3}[-\s\.]?)?\d(?:[ -]?\d){6,9}(?=<|\s|$)')
-    return pattern.findall(innerText)
+    return [ re.sub(r'[^0-9+()]+', ' ', p) for p in pattern.findall(innerText)]
 
 def parse_url(website):
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
